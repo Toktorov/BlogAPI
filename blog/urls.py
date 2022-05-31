@@ -16,16 +16,25 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from apps.posts.views import PostAPIView, PostCreateAPIView, PostUpdateAPIView, PostDeleteAPIView
+from apps.categories.views import CategoryAPIView,CategoryCreateAPIView,CategoryDeleteAPIView,CategoryUpdateAPIView
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+
+    #post api
     path('api/post', PostAPIView.as_view(), name = "post_api"),
     path('api/post/create', PostCreateAPIView.as_view(), name = "post_create_api"),
     path('api/post/update/<int:pk>', PostUpdateAPIView.as_view(), name = "post_api_update"),
     path('api/post/delete/<int:pk>', PostDeleteAPIView.as_view(), name = "post_api_delete"),
+
+    #category api
+    path('api/category',CategoryAPIView.as_view(),name = "category_api"),
+    path('api/category/create',CategoryCreateAPIView.as_view(),name = "category_create_api"),
+    path('api/category/update/<int:pk>',CategoryUpdateAPIView.as_view(),name = "category_api_update"),
+    path('api/category/delete/<int:pk>',CategoryDeleteAPIView.as_view(),name = "category_api_delete"),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
