@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from apps.posts.views import PostAPIView, PostCreateAPIView, PostUpdateAPIView, PostDeleteAPIView
+from apps.posts.views import PostAPIView, PostCreateAPIView, PostUpdateAPIView, PostDeleteAPIView,PostCommentAPIView,PostCommentCreateAPIView,PostCommentUpdateAPIView,PostCommentDeleteAPIView
 from apps.categories.views import CategoryAPIView,CategoryCreateAPIView,CategoryDeleteAPIView,CategoryUpdateAPIView
 from apps.users.views import UserAPIView, UserCreateAPIView, UserUpdateAPIView, UserDeleteAPIView
 from django.conf import settings
@@ -30,6 +30,12 @@ urlpatterns = [
     path('api/post/create', PostCreateAPIView.as_view(), name = "post_create_api"),
     path('api/post/update/<int:pk>', PostUpdateAPIView.as_view(), name = "post_api_update"),
     path('api/post/delete/<int:pk>', PostDeleteAPIView.as_view(), name = "post_api_delete"),
+
+    #post_comment api
+    path('api/post_comment',PostCommentAPIView.as_view(),name = "comment_api"),
+    path('api/post_comment/create',PostCommentCreateAPIView.as_view(),name = "post_create_api"),
+    path('api/post_comment/update/<int:pk>',PostCommentUpdateAPIView.as_view(),name = "post_api_update"),
+    path('api/post_comment/delete/<int:pk>',PostCommentDeleteAPIView.as_view(),name = "post_api_delete"),
 
     #category api
     path('api/categories',CategoryAPIView.as_view(),name = "category_api"),
