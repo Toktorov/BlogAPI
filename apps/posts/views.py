@@ -21,7 +21,7 @@ class PostDeleteAPIView(generics.DestroyAPIView):
     serializer_class = PostSerializer
 
 
-class PostCommentAPIView(generics.CreateAPIView):
+class PostCommentAPIView(generics.ListAPIView):
     queryset = PostComment.objects.all() 
     serializer_class = CommentSerializer
 
@@ -30,7 +30,7 @@ class PostCommentCreateAPIView(generics.CreateAPIView):
     serializer_class = CommentCreateSerializer
 
 
-class PostCommentUpdateAPIView(generics.CreateAPIView):
+class PostCommentUpdateAPIView(generics.UpdateAPIView):
     queryset = PostComment.objects.all()
     serializer_class = CommentUpdateSerializer
 
