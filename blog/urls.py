@@ -15,39 +15,42 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from apps.posts.views import PostAPIView, PostCreateAPIView, PostUpdateAPIView, PostDeleteAPIView,PostCommentAPIView,PostCommentCreateAPIView,PostCommentUpdateAPIView,PostCommentDeleteAPIView
-from apps.categories.views import CategoryAPIView,CategoryCreateAPIView,CategoryDeleteAPIView,CategoryUpdateAPIView
-from apps.users.views import UserAPIView, UserCreateAPIView, UserUpdateAPIView, UserDeleteAPIView
 from django.conf import settings
 from django.conf.urls.static import static
+from drf_yasg.views import get_schema_view  # new
+from drf_yasg import openapi  # new
+from rest_framework import permissions
+
+
+schema_view = get_schema_view(  # new
+    openapi.Info(
+        title="Snippets API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    # url=f'{settings.APP_URL}/api/v3/',
+    # patterns=[path('api/', include('myapi.urls')), ],
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+api_urlpatterns = [
+    path('', include('apps.posts.urls')),
+    path('', include('apps.users.urls')),
+    path('', include('apps.categories.urls')),
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+    path('api/', include(api_urlpatterns)),
 
-    #post api
-    path('api/posts', PostAPIView.as_view(), name = "post_api"),
-    path('api/post/create', PostCreateAPIView.as_view(), name = "post_create_api"),
-    path('api/post/update/<int:pk>', PostUpdateAPIView.as_view(), name = "post_api_update"),
-    path('api/post/delete/<int:pk>', PostDeleteAPIView.as_view(), name = "post_api_delete"),
-
-    #post_comment api
-    path('api/post_comment',PostCommentAPIView.as_view(),name = "comment_api"),
-    path('api/post_comment/create',PostCommentCreateAPIView.as_view(),name = "post_create_api"),
-    path('api/post_comment/update/<int:pk>',PostCommentUpdateAPIView.as_view(),name = "post_api_update"),
-    path('api/post_comment/delete/<int:pk>',PostCommentDeleteAPIView.as_view(),name = "post_api_delete"),
-
-    #category api
-    path('api/categories',CategoryAPIView.as_view(),name = "category_api"),
-    path('api/category/create',CategoryCreateAPIView.as_view(),name = "category_create_api"),
-    path('api/category/update/<int:pk>',CategoryUpdateAPIView.as_view(),name = "category_api_update"),
-    path('api/category/delete/<int:pk>',CategoryDeleteAPIView.as_view(),name = "category_api_delete"),
-
-    #users api
-    path('api/users', UserAPIView.as_view(), name = "users_api"),
-    path('api/users/create', UserCreateAPIView.as_view(), name = "users_create_api"),
-    path('api/users/update/<int:pk>', UserUpdateAPIView.as_view(), name = "users_update_api"),
-    path('api/users/delete/<int:pk>', UserDeleteAPIView.as_view(), name = "users_delete_api"),
+    #docs 
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
