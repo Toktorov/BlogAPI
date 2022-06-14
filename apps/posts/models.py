@@ -1,32 +1,63 @@
-from tabnanny import verbose
 from django.db import models
-from apps.categories.models import Category
-from apps.users.models import User
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+User = get_user_model()
+
+
+class Tag(models.Model):
+    name = models.CharField(
+        max_length=255,
+        db_index=True,
+    )
+
+    def __str__(self):
+        return f'{self.id} -- {self.name}'
+
+
 class Post(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    image = models.ImageField(upload_to = 'post_image/')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null = True, related_name="category")
-    created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='posts'
+    )
+    title = models.CharField(
+        max_length=255, blank=True,
+        null=True, db_index=True,
+    )
+    description = models.TextField(
+        blank=True, null=True
+    )
+    tags = models.ManyToManyField(Tag, related_name='post_tags')
+    create_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title 
+        return f'{self.title} -- {self.create_at}'
 
     class Meta:
-        verbose_name = "Пост"
-        verbose_name_plural = "Посты"
+        ordering = ('-id',)
 
-class PostComment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comment")
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    text = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
+
+class PostImage(models.Model):
+    image = models.ImageField(
+        upload_to='images'
+    )
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE,
+        related_name='post_images',
+    )
 
     def __str__(self):
-        return self.text 
+        return f"{self.id} == {self.post.title}"
 
-    class Meta:
-        verbose_name = "Комментарий"
-        verbose_name_plural = "Комментарии"
+
+class Like(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='like_user'
+    )
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE,
+        related_name='like_post',
+    )
+
+    def __str__(self):
+        return f"{self.id}"

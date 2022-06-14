@@ -1,38 +1,51 @@
+from rest_framework import serializers
 
-from dataclasses import field
-from rest_framework import  serializers
-from apps.posts.models import Post, PostComment
+from apps.comments.serializers import CommentSerializer
+from apps.posts.models import Post, PostImage, Like, Tag
 
-class CommentSerializer(serializers.ModelSerializer):
+
+class TagSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = PostComment
+        model = Tag
+        fields = '__all__'
+
+
+class PostImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostImage
         fields = "__all__"
 
 
-class CommentCreateSerializer(serializers.ModelSerializer):
+class LikeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PostComment
-        fields = "__all__"
-
-
-class CommentUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PostComment
+        model = Like
         fields = "__all__"
 
 
 class PostSerializer(serializers.ModelSerializer):
-    comment = CommentSerializer(many = True, read_only = True)
+    user = serializers.CharField(read_only=True)
+    post_images = PostImageSerializer(read_only=True, many=True)
+    total_likes = serializers.SerializerMethodField()
+
     class Meta:
-        model = Post 
+        model = Post
         fields = "__all__"
 
-class PostCreateSerializer(serializers.ModelSerializer):
+    def get_total_likes(self, instance):
+        return instance.like_post.all().count()
+
+
+class PostDetailSerializer(serializers.ModelSerializer):
+    post_images = PostImageSerializer(read_only=True, many=True)
+    like_post = LikeSerializer(read_only=True, many=True)
+    total_likes = serializers.SerializerMethodField(read_only=True)
+    comment = CommentSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
+
     class Meta:
-        model = Post 
+        model = Post
         fields = "__all__"
 
-class PostUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post 
-        fields = "__all__"
+    def get_total_likes(self, instance):
+        return instance.like_post.all().count()

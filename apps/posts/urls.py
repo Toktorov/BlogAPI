@@ -1,16 +1,14 @@
-from django.urls import path 
-from apps.posts.views import PostAPIView, PostCreateAPIView, PostUpdateAPIView, PostDeleteAPIView,PostCommentAPIView,PostCommentCreateAPIView,PostCommentUpdateAPIView,PostCommentDeleteAPIView
+from rest_framework.routers import DefaultRouter
+from apps.posts import views
+from django.urls import path
+
+router = DefaultRouter()
+router.register('post', views.PostAPIViewSet, basename='posts')
+router.register('image', views.PostImageAPIViewSet, basename='post_image')
+router.register('tags', views.TagAPIViewSet, basename='tags')
 
 urlpatterns = [
-    #post api
-    path('posts', PostAPIView.as_view(), name = "post_api"),
-    path('post/create', PostCreateAPIView.as_view(), name = "post_create_api"),
-    path('post/update/<int:pk>', PostUpdateAPIView.as_view(), name = "post_api_update"),
-    path('post/delete/<int:pk>', PostDeleteAPIView.as_view(), name = "post_api_delete"),
-
-    #post_comment api
-    path('post_comment',PostCommentAPIView.as_view(),name = "comment_api"),
-    path('post_comment/create',PostCommentCreateAPIView.as_view(),name = "post_create_api"),
-    path('post_comment/update/<int:pk>',PostCommentUpdateAPIView.as_view(),name = "post_api_update"),
-    path('post_comment/delete/<int:pk>',PostCommentDeleteAPIView.as_view(),name = "post_api_delete"),
+    path('like/', views.LikeCreateAPIView.as_view(), name='like'),
 ]
+
+urlpatterns += router.urls
